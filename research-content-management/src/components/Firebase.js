@@ -1,23 +1,41 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import firebase from 'firebase'
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import React from "react";
+import { getFirestore, collection, onSnapshot } from "firebase/firestore";
+import { Component, useEffect, useState } from 'react';
+import {storage} from './Firebaseconfig1'
+import { app } from './Firebaseconfig1';
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyB73fjF8BJNYK1ShpcBco6rS4qhjJHDEKw",
-  authDomain: "research-content-management.firebaseapp.com",
-  projectId: "research-content-management",
-  storageBucket: "research-content-management.appspot.com",
-  messagingSenderId: "131468755929",
-  appId: "1:131468755929:web:51aeba694f121891244fc8",
-  measurementId: "G-PC9VQ6VC6H"
-};
+function Firebase (){
+const [todos, setTodos] = useState([])
 
-// Initialize Firebase
-export const app = initializeApp(firebaseConfig);
-export const analytics = getAnalytics(app);
-export var storage = firebase.storage()
+  const db = getFirestore(app);
+
+  useEffect(() => {
+    onSnapshot(collection(db, 'contents'), (snapshot) => {
+      setTodos(snapshot.docs.map(doc => doc.data()))
+      console.log(todos)
+    })
+  }, []);
+
+  return (
+    <div className="App">
+      <header className="App-header">
+        <ul> 
+          {todos.map((todo) =>
+          (
+            <div>
+              <li key={todo.Year}>{todo.Year}</li>
+              <li key={todo.Subtopic}>{todo.Subtopic}</li>
+              <li key={todo.Topic}>{todo.Topic}</li>
+              <li key={todo.pdfId}>{todo.pdfId}</li>
+
+            </div>
+          ))}
+
+        </ul>
+
+      </header>
+    </div>
+  );
+}
+
+export default Firebase;
